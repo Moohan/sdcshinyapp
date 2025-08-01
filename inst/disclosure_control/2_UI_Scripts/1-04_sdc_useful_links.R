@@ -3,7 +3,7 @@
 # Purpose     : Set up UI for Useful Links Sub-Tab
 # Last Update : 01 Aug 2025
 # Author      : Robert Mitchell
-# Posit Version: 4.1.2
+# Posit Version: 4.4.2
 # ------------------------------------------------------------------------------
 
 # Useful Links Sub-Tab for Home Tab
