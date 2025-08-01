@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Script Name : 1-03_contact_details.R
 # Purpose     : Set up UI for Contact Details Sub-Tab
-# Last Update : 01 Oct 2024
+# Last Update : 01 Aug 2025
 # Author      : Robert Mitchell
 # Posit Version: 4.4.2
 # ------------------------------------------------------------------------------
