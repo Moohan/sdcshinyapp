@@ -32,9 +32,6 @@ App_data <- shiny::reactiveValues(values = NULL)
 shiny::observe({
   # Reset trainingdata() only if data() is available
   if (!is.null(data())) {
-    if (!is.null(trainingdata())) {
-      trainingdata(NULL)
-    }
 
     # Assign uploaded data with Serial column
     App_data$values <- data() |>
