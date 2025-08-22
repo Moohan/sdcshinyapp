@@ -1,30 +1,27 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 01 Oct 2024
-#By: Robert Mitchell
-#Script: 4_disclosure_methods.R
-#Purpose: To set up UI for the Disclosure Methods Tab
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 4_disclosure_methods.R
+# Purpose     : UI for Disclosure Methods Tab
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
 # Create 3. SDC Methods Tab ----
-shiny::tabPanel(title = "3. SDC Methods", shiny::navlistPanel(
-  id = "methods",
-  widths = sb_width,
+shiny::tabPanel(
+  title = "3. SDC Methods",
+  shiny::navlistPanel(
+    id = "methods",
+    widths = sb_width,
 
-  # 1. Rounding ----
-  source("2_UI_Scripts/4-01_rounding.R",  local = TRUE)$value,
+    # Rounding
+    source("2_UI_Scripts/4-01_rounding.R", local = TRUE)$value,
 
-  # 2. Swapping ----
-  source("2_UI_Scripts/4-02_swapping.R",  local = TRUE)$value,
+    # Swapping
+    source("2_UI_Scripts/4-02_swapping.R", local = TRUE)$value,
 
-  ## 3. Suppression ----
-  source("2_UI_Scripts/4-03_suppression.R",  local = TRUE)$value
-  ))
+    # Suppression
+    source("2_UI_Scripts/4-03_suppression.R", local = TRUE)$value
+  )
+)
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----
