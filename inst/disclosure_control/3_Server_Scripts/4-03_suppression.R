@@ -71,6 +71,12 @@ shiny::observeEvent(input$pri_sec_sup, {
     shiny::validate(shiny::need(FALSE, "Invalid primary suppression condition"))
   }
 
+  # Ensure primary suppression variable is not in secondary suppression variables
+  if (input$Disc_Variables_Pri_Supp %in% input$Disc_Variables_Secondary_Supp) {
+    shinyalert::shinyalert("Variable overlap detected", "Primary suppression variable must not be included in secondary suppression variables.", type = "error")
+    shiny::validate(shiny::need(FALSE, "Primary suppression variable is also selected for secondary suppression"))
+  }
+
   App_data$values <- sdcshinyapp::Stat_Secondary_Supress(
     App_data$values,
     input$Disc_Variables_Pri_Supp,
@@ -82,6 +88,7 @@ shiny::observeEvent(input$pri_sec_sup, {
 
   shinyalert::shinyalert("Primary & secondary suppression successful.", type = "success")
 })
+
 
 
 # 3. Data Visualisation ----
