@@ -30,9 +30,17 @@ App_data <- shiny::reactiveValues(values = NULL)
 
 # Add Serial column to uploaded data
 shiny::observe({
-  App_data$values <- data() |>
-    dplyr::mutate(Serial = dplyr::row_number()) |>
-    dplyr::select(Serial, dplyr::everything())
+  # Reset trainingdata() only if data() is available
+  if (!is.null(data())) {
+    if (!is.null(trainingdata())) {
+      trainingdata(NULL)
+    }
+
+    # Assign uploaded data with Serial column
+    App_data$values <- data() |>
+      dplyr::mutate(Serial = dplyr::row_number()) |>
+      dplyr::select(Serial, dplyr::everything())
+  }
 })
 
 # 3. Summary Table ----
