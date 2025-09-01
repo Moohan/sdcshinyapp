@@ -55,7 +55,11 @@ Stat_Round <- function(orig_data, var_choice, round_cond) {
   }
 
   # Identify variables that are whole numbers
-  num_var_choice <- var_choice[sapply(orig_data[var_choice], DistributionUtils::is.wholenumber)]
+  num_var_choice <- var_choice[
+    sapply(orig_data[var_choice], function(col) {
+      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+    })
+  ]
 
   # Return original data if no numeric variables are selected
   if (length(num_var_choice) == 0) {
@@ -126,7 +130,12 @@ Stat_Swap <- function(orig_data, var_choice, swap_cond) {
   }
 
   # Filter numeric columns from var_choice - return orig_data if no numeric variables selected
-  num_var_choice <- var_choice[sapply(orig_data[var_choice], is.numeric)]
+  num_var_choice <- var_choice[
+    sapply(orig_data[var_choice], function(col) {
+      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+    })
+  ]
+
   if (length(num_var_choice) == 0) {
     message("Warning: 'var_choice' must contain at least one numeric variable.")
     return(orig_data)
@@ -227,7 +236,11 @@ Stat_Primary_Supress <- function(orig_data, var_choice, char_supp = "*", sup_con
   na_positions <- is.na(ps_data)
 
   # Filter numeric columns
-  num_var_choice <- var_choice[sapply(ps_data[var_choice], DistributionUtils::is.wholenumber)]
+  num_var_choice <- var_choice[
+    sapply(orig_data[var_choice], function(col) {
+      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+    })
+  ]
 
   # Return original data if no numeric variables are selected
   if (length(num_var_choice) == 0) {
@@ -327,7 +340,11 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   ps_na_positions <- is.na(ps_data)
 
   # Filter numeric columns
-  ps_num_var_choice <- pri_var_choice[sapply(ps_data[pri_var_choice], DistributionUtils::is.wholenumber)]
+  ps_num_var_choice <- var_choice[
+    sapply(orig_data[pri_var_choice], function(col) {
+      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+    })
+  ]
 
   # Return original data if no numeric variables are selected
   if (length(ps_num_var_choice) == 0) {
@@ -355,7 +372,11 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   ss_na_positions <- is.na(ss_data)
 
   # Filter numeric columns
-  ss_num_var_choice <- sec_var_choice[sapply(ss_data[sec_var_choice], DistributionUtils::is.wholenumber)]
+  ss_num_var_choice <- var_choice[
+    sapply(ss_data[sec_var_choice], function(col) {
+      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+    })
+  ]
 
   # Return original data if no numeric variables are selected
   if (length(ss_num_var_choice) == 0) {
@@ -366,7 +387,6 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   # Replace NAs with a high value
   ss_data <- ss_data |>
     dplyr::mutate(across(all_of(ss_num_var_choice), ~ dplyr::coalesce(., 999999999)))
-
 
   # Function to apply secondary suppression
   apply_suppression <- function(x, sup_cond, char_supp, zero) {
