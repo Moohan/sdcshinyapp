@@ -66,7 +66,7 @@ shiny::observeEvent(input$addFilter, {
 
     # Error Notification to re-add serial and to store unprocessed data ----
     shinyalert::shinyalert("No Unprocessed data stored. Serial number removed from dataset.",
-               "Please re-add serial number first and then press the Store Unprocessed Data button.", type = "error")
+                           "Please re-add serial number first and then press the Store Unprocessed Data button.", type = "error")
 
     # Ensures that the unprocessed data is stored and Serial number is given.
     shiny::validate(
@@ -122,7 +122,7 @@ shiny::observeEvent(input$addFilter, {
                   shiny::actionButton(clearFilterId, label = "Clear filter", style = "float: right;"),
                   shiny::selectInput(colfilterId, label = "Choose Variable", choices = as.list(headers)),
                   shiny::selectInput(rowfilterId, label = "Select variable values to remove",
-                              choices = NULL, selected = NULL, multiple = TRUE)
+                                     choices = NULL, selected = NULL, multiple = TRUE)
     )
   )
 
@@ -133,7 +133,7 @@ shiny::observeEvent(input$addFilter, {
     values <- as.list(unique(App_data$values[col]))[[1]]
 
     shiny::updateSelectInput(session, rowfilterId , label = "Select variable values to remove",
-                      choices = values, selected = NULL)
+                             choices = values, selected = NULL)
 
     shiny::aggregFilterObserver[[filterId]]$col <<- col
     shiny::aggregFilterObserver[[filterId]]$rows <<- NULL
@@ -249,7 +249,7 @@ shiny::observeEvent(
 
       # Error Notification to filter data and re-add serial number
       shinyalert::shinyalert("There is no filtered values stored and no serial number attached to data",
-                 "Please re-add serial number and press the store filtered values button", type = "error")
+                             "Please re-add serial number and press the store filtered values button", type = "error")
 
       # Ensure that removed data is there and Serial number is given
       shiny::validate(
@@ -293,7 +293,7 @@ shiny::observeEvent(
     })
 
     # Read Filtered Data
-    App_data$values <- rbind(temp, removed_values$removed_data) |>
+    App_data$values <- base::rbind(temp, removed_values$removed_data) |>
       dplyr::arrange(Serial)
 
     # Clear Stored data after re-added to dataset.
