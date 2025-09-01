@@ -54,15 +54,8 @@ Stat_Round <- function(orig_data, var_choice, round_cond) {
     stop("Error: 'round_cond' must be a single positive whole integer greater than 1.")
   }
 
-  # Replace NA values with a high value (999999999) to avoid issues during rounding
-  r_data <- orig_data |>
-    dplyr::mutate(dplyr::across(dplyr::all_of(var_choice), ~ tidyr::replace_na(., 999999999)))
-
-  # Determine the value to replace NA after rounding
-  rounding_NA_value <- plyr::round_any(999999999, round_cond, round)
-
   # Identify variables that are whole numbers
-  num_var_choice <- var_choice[sapply(r_data[var_choice], DistributionUtils::is.wholenumber)]
+  num_var_choice <- var_choice[sapply(orig_data[var_choice], DistributionUtils::is.wholenumber)]
 
   # Return original data if no numeric variables are selected
   if (length(num_var_choice) == 0) {
@@ -70,13 +63,20 @@ Stat_Round <- function(orig_data, var_choice, round_cond) {
     return(orig_data)
   }
 
+  # Replace NA values with a high value (999999999) to avoid issues during rounding
+  r_data <- orig_data |>
+    dplyr::mutate(dplyr::across(dplyr::all_of(num_var_choice), ~ tidyr::replace_na(., 999999999)))
+
+  # Determine the value to replace NA after rounding
+  rounding_NA_value <- plyr::round_any(999999999, round_cond, round)
+
   # Round the selected variables to the specified base
   r_data <- r_data |>
     dplyr::mutate(dplyr::across(dplyr::all_of(num_var_choice), ~ plyr::round_any(., round_cond, round)))
 
   # Restore NA values in the rounded data
   r_data <- r_data |>
-    dplyr::mutate(dplyr::across(dplyr::all_of(var_choice), ~ dplyr::na_if(., rounding_NA_value)))
+    dplyr::mutate(dplyr::across(dplyr::all_of(num_var_choice), ~ dplyr::na_if(., rounding_NA_value)))
 
   # Return the rounded data
   return(r_data)
@@ -126,24 +126,15 @@ Stat_Swap <- function(orig_data, var_choice, swap_cond) {
   }
 
   # Filter numeric columns from var_choice - return orig_data if no numeric variables selected
-  numeric_vars <- var_choice[sapply(orig_data[var_choice], is.numeric)]
-  if (length(numeric_vars) == 0) {
+  num_var_choice <- var_choice[sapply(orig_data[var_choice], is.numeric)]
+  if (length(num_var_choice) == 0) {
     message("Warning: 'var_choice' must contain at least one numeric variable.")
     return(orig_data)
   }
 
   # Replace NAs with a high value and filter numeric columns
   swapped_data <- orig_data |>
-    dplyr::mutate(dplyr::across(dplyr::all_of(var_choice), ~ dplyr::coalesce(., 999999999)))
-
-  # Filter by whole number columns
-  num_var_choice <- var_choice[sapply(swapped_data[var_choice], DistributionUtils::is.wholenumber)]
-
-  # Return original data if no numeric variables are selected
-  if (length(num_var_choice) == 0) {
-    warning("No whole numeric variables have been selected. The original input data will be returned.")
-    return(orig_data)
-  }
+    dplyr::mutate(dplyr::across(dplyr::all_of(num_var_choice), ~ dplyr::coalesce(., 999999999)))
 
   # Process each numeric column
   for (var in num_var_choice) {
@@ -165,7 +156,7 @@ Stat_Swap <- function(orig_data, var_choice, swap_cond) {
   }
 
   # Add NAs back to data
-  swapped_data[, var_choice][swapped_data[, var_choice] == 999999999] <- NA
+  swapped_data[, num_var_choice][swapped_data[, num_var_choice] == 999999999] <- NA
 
   return(swapped_data)
 }
@@ -235,10 +226,6 @@ Stat_Primary_Supress <- function(orig_data, var_choice, char_supp = "*", sup_con
   # Store original NA positions
   na_positions <- is.na(ps_data)
 
-  # Replace NAs with a high value
-  ps_data <- ps_data |>
-    dplyr::mutate(dplyr::across(dplyr::all_of(var_choice), ~ dplyr::coalesce(., 999999999)))
-
   # Filter numeric columns
   num_var_choice <- var_choice[sapply(ps_data[var_choice], DistributionUtils::is.wholenumber)]
 
@@ -247,6 +234,10 @@ Stat_Primary_Supress <- function(orig_data, var_choice, char_supp = "*", sup_con
     warning("No numeric variables have been selected. The original input data will be returned.")
     return(orig_data)
   }
+
+  # Replace NAs with a high value
+  ps_data <- ps_data |>
+    dplyr::mutate(dplyr::across(dplyr::all_of(num_var_choice), ~ dplyr::coalesce(., 999999999)))
 
   # Apply primary suppression to the selected variables
   ps_data <- ps_data |>
@@ -334,10 +325,6 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   # Store original NA positions
   ps_na_positions <- is.na(ps_data)
 
-  # Replace NAs with a high value
-  ps_data <- ps_data |>
-    dplyr::mutate(dplyr::across(dplyr::all_of(pri_var_choice), ~ dplyr::coalesce(., 999999999)))
-
   # Filter numeric columns
   ps_num_var_choice <- pri_var_choice[sapply(ps_data[pri_var_choice], DistributionUtils::is.wholenumber)]
 
@@ -346,6 +333,10 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
     warning("No numeric variables have been selected. The original input data will be returned.")
     return(orig_data)
   }
+
+  # Replace NAs with a high value
+  ps_data <- ps_data |>
+    dplyr::mutate(dplyr::across(dplyr::all_of(ps_num_var_choice), ~ dplyr::coalesce(., 999999999)))
 
   # Apply primary suppression to the selected variables
   ps_data <- ps_data |>
@@ -362,10 +353,6 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   # Store original NA positions
   ss_na_positions <- is.na(ss_data)
 
-  # Replace NAs with a high value
-  ss_data <- ss_data |>
-    dplyr::mutate(across(all_of(sec_var_choice), ~ dplyr::coalesce(., 999999999)))
-
   # Filter numeric columns
   ss_num_var_choice <- sec_var_choice[sapply(ss_data[sec_var_choice], DistributionUtils::is.wholenumber)]
 
@@ -374,6 +361,11 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
     warning("No numeric variables have been selected. The original input data will be returned.")
     return(orig_data)
   }
+
+  # Replace NAs with a high value
+  ss_data <- ss_data |>
+    dplyr::mutate(across(all_of(ss_num_var_choice), ~ dplyr::coalesce(., 999999999)))
+
 
   # Function to apply secondary suppression
   apply_suppression <- function(x, sup_cond, char_supp, zero) {
