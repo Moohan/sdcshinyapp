@@ -16,7 +16,7 @@ shiny::observeEvent(
 
     # Ensures input data is provided
     shiny::validate(
-      need(App_data$values, "There is no input data")
+      shiny::need(App_data$values, "There is no input data")
     )
 
     # Message if no Serial variable is Provided
