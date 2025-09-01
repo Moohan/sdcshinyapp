@@ -57,7 +57,8 @@ Stat_Round <- function(orig_data, var_choice, round_cond) {
   # Identify variables that are whole numbers
   num_var_choice <- var_choice[
     sapply(orig_data[var_choice], function(col) {
-      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+      non_na_vals <- col[!is.na(col)]
+      all(DistributionUtils::is.wholenumber(non_na_vals))
     })
   ]
 
@@ -132,9 +133,11 @@ Stat_Swap <- function(orig_data, var_choice, swap_cond) {
   # Filter numeric columns from var_choice - return orig_data if no numeric variables selected
   num_var_choice <- var_choice[
     sapply(orig_data[var_choice], function(col) {
-      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+      non_na_vals <- col[!is.na(col)]
+      all(DistributionUtils::is.wholenumber(non_na_vals))
     })
   ]
+
 
   if (length(num_var_choice) == 0) {
     message("Warning: 'var_choice' must contain at least one numeric variable.")
@@ -238,7 +241,8 @@ Stat_Primary_Supress <- function(orig_data, var_choice, char_supp = "*", sup_con
   # Filter numeric columns
   num_var_choice <- var_choice[
     sapply(orig_data[var_choice], function(col) {
-      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+      non_na_vals <- col[!is.na(col)]
+      all(DistributionUtils::is.wholenumber(non_na_vals))
     })
   ]
 
@@ -340,9 +344,10 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   ps_na_positions <- is.na(ps_data)
 
   # Filter numeric columns
-  ps_num_var_choice <- var_choice[
+  ps_num_var_choice <- pri_var_choice[
     sapply(orig_data[pri_var_choice], function(col) {
-      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+      non_na_vals <- col[!is.na(col)]
+      all(DistributionUtils::is.wholenumber(non_na_vals))
     })
   ]
 
@@ -372,9 +377,10 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
   ss_na_positions <- is.na(ss_data)
 
   # Filter numeric columns
-  ss_num_var_choice <- var_choice[
+  ss_num_var_choice <- sec_var_choice[
     sapply(ss_data[sec_var_choice], function(col) {
-      all(is.na(col) | DistributionUtils::is.wholenumber(col))
+      non_na_vals <- col[!is.na(col)]
+      all(DistributionUtils::is.wholenumber(non_na_vals))
     })
   ]
 
