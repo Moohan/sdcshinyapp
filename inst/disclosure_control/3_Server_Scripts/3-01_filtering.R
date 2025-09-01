@@ -7,10 +7,10 @@
 # ------------------------------------------------------------------------------
 
 # Allows unfiltered data to be stored
-unprocessed <- reactiveValues(data=NULL)
+unprocessed <- shiny::reactiveValues(data=NULL)
 
 # Store unfiltered data with button press ----
-observeEvent(
+shiny::observeEvent(
 
   input$Unprocess_Store, {
 
@@ -23,7 +23,7 @@ observeEvent(
     if ("Serial" %notin% colnames(App_data$values)){
 
       # Error Notification
-      shinyalert("No serial number attached to data.", "Please re-add serial number for storage.", type = "error")
+      shinyalert::shinyalert("No serial number attached to data.", "Please re-add serial number for storage.", type = "error")
 
       # Validation to ensure that data has Serial Number
       shiny::validate(
@@ -33,7 +33,7 @@ observeEvent(
     } else {
 
       # Notification to indicate that data is successfully stored prior to filtering
-      shinyalert("Unprocessed data stored successfully.", "Filtering can now occur.", type = "success")
+      shinyalert::shinyalert("Unprocessed data stored successfully.", "Filtering can now occur.", type = "success")
 
     }
 
@@ -50,50 +50,50 @@ observeEvent(
 filter <- character(0)
 
 # Sets up filter
-makeReactiveBinding("aggregFilterObserver")
+shiny::makeReactiveBinding("aggregFilterObserver")
 aggregFilterObserver <- list() # Initial empty list for filtered variables
 
 # Allows a filter to be added to data due to button press
-observeEvent(input$addFilter, {
+shiny::observeEvent(input$addFilter, {
 
   # Ensures that this only works when data is provided
   shiny::validate(
-    need(App_data$values, "There is no input data")
+    shiny::need(App_data$values, "There is no input data")
   )
 
   # Checks if no Unprocessed data is stored and serial number is removed ----
   if (is.null(unprocessed$data) & ("Serial" %notin% colnames(App_data$values))){
 
     # Error Notification to re-add serial and to store unprocessed data ----
-    shinyalert("No Unprocessed data stored. Serial number removed from dataset.",
+    shinyalert::shinyalert("No Unprocessed data stored. Serial number removed from dataset.",
                "Please re-add serial number first and then press the Store Unprocessed Data button.", type = "error")
 
     # Ensures that the unprocessed data is stored and Serial number is given.
     shiny::validate(
-      need(App_data$values$Serial, "There is no Serial Number"),
-      need(unprocessed$data, "There is no input data")
+      shiny::need(App_data$values$Serial, "There is no Serial Number"),
+      shiny::need(unprocessed$data, "There is no input data")
     )
 
     # Checks if data isn't stored prior to filtering
   } else if (is.null(unprocessed$data) & ("Serial" %in% colnames(App_data$values))) {
 
     # Error Notification to store data prior to filtering
-    shinyalert("No Unprocessed data stored.", "Press the Store Unprocessed Data button.", type = "error")
+    shinyalert::shinyalert("No Unprocessed data stored.", "Press the Store Unprocessed Data button.", type = "error")
 
     # Ensures that the unfiltered data is stored.
     shiny::validate(
-      need(unprocessed$data, "There is no input data")
+      shiny::need(unprocessed$data, "There is no input data")
     )
 
     # Check if serial number has been removed
   } else if (!is.null(unprocessed$data) & ("Serial" %notin% colnames(App_data$values))) {
 
     # Error Notification to re-add Serial number ----
-    shinyalert("Serial number removed from dataset.", "Please re-add serial number.", type = "error")
+    shinyalert::shinyalert("Serial number removed from dataset.", "Please re-add serial number.", type = "error")
 
     # Ensures that the unfiltered data is stored.
     shiny::validate(
-      need(App_data$values$Serial, "There is no Serial Number")
+      shiny::need(App_data$values$Serial, "There is no Serial Number")
     )
 
     # Filtering can occur
@@ -116,44 +116,44 @@ observeEvent(input$addFilter, {
   headers <- headers[2:length(headers)]
 
   # Sets up ui for variable filtering
-  insertUI(
+  shiny::insertUI(
     selector = '#placeholderFilter',
     ui = tags$div(id = filterId,
-                  actionButton(clearFilterId, label = "Clear filter", style = "float: right;"),
-                  selectInput(colfilterId, label = "Choose Variable", choices = as.list(headers)),
-                  selectInput(rowfilterId, label = "Select variable values to remove",
+                  shiny::actionButton(clearFilterId, label = "Clear filter", style = "float: right;"),
+                  shiny::selectInput(colfilterId, label = "Choose Variable", choices = as.list(headers)),
+                  shiny::selectInput(rowfilterId, label = "Select variable values to remove",
                               choices = NULL, selected = NULL, multiple = TRUE)
     )
   )
 
   # Updates values to be removed based on variable choosen
-  observeEvent(input[[colfilterId]], {
+  shiny::observeEvent(input[[colfilterId]], {
 
     col <- input[[colfilterId]]
     values <- as.list(unique(App_data$values[col]))[[1]]
 
-    updateSelectInput(session, rowfilterId , label = "Select variable values to remove",
+    shiny::updateSelectInput(session, rowfilterId , label = "Select variable values to remove",
                       choices = values, selected = NULL)
 
-    aggregFilterObserver[[filterId]]$col <<- col
-    aggregFilterObserver[[filterId]]$rows <<- NULL
+    shiny::aggregFilterObserver[[filterId]]$col <<- col
+    shiny::aggregFilterObserver[[filterId]]$rows <<- NULL
   })
 
   # Filters Rows
 
-  observeEvent(input[[rowfilterId]], {
+  shiny::observeEvent(input[[rowfilterId]], {
 
     rows <- input[[rowfilterId]]
 
-    aggregFilterObserver[[filterId]]$rows <<- rows
+    shiny::aggregFilterObserver[[filterId]]$rows <<- rows
 
   })
 
   # Remove UI added by Add Filter Button - press clear filter button to do so.
-  observeEvent(input[[clearFilterId]], {
-    removeUI(selector = paste0('#', filterId))
+  shiny::observeEvent(input[[clearFilterId]], {
+    shiny::removeUI(selector = paste0('#', filterId))
 
-    aggregFilterObserver[[filterId]] <<- NULL
+    shiny::aggregFilterObserver[[filterId]] <<- NULL
 
   })
 
@@ -179,18 +179,18 @@ output$filtered_data <- DT::renderDataTable({
   App_data$values <- dataSet
 
   # Data visualisation is achieved via a function inside a external script.
-  Filter_Data <- Table_Render(App_data$values,cb)
+  Filter_Data <- sdcshinyapp::Table_Render(App_data$values,cb)
 
 })
 
 ##############################
 # This is where storage of data removed due to filtering occurs via a button press.
 
-removed_values <- reactiveValues(removed_data=NULL)
+removed_values <- shiny::reactiveValues(removed_data=NULL)
 
 
 # Store removed values with button press ----
-observeEvent(
+shiny::observeEvent(
 
   input$store_data, {
 
@@ -198,11 +198,11 @@ observeEvent(
     if ("Serial" %notin% colnames(App_data$values)){
 
       # Error Notification to re-add Serial number
-      shinyalert("No serial number attached to data.", "Please re-add serial number for storage.", type = "error")
+      shinyalert::shinyalert("No serial number attached to data.", "Please re-add serial number for storage.", type = "error")
 
       # Ensures data has Serial Number
       shiny::validate(
-        need(App_data$values$Serial, "There is no Serial Number")
+        shiny::need(App_data$values$Serial, "There is no Serial Number")
       )
 
       # App Data has Serial Number
@@ -214,24 +214,24 @@ observeEvent(
     if (is.null(unprocessed$data)){
 
       # Error Notification to check if data is stored
-      shinyalert("No Unprocessed data stored.", "Please press the Store Unprocessed Data button.", type = "error")
+      shinyalert::shinyalert("No Unprocessed data stored.", "Please press the Store Unprocessed Data button.", type = "error")
 
       # Ensures that data is stored prior to filtering.
       shiny::validate(
-        need(unprocessed$data, "There is no input data")
+        shiny::need(unprocessed$data, "There is no input data")
       )
 
 
     } else {
 
       # Notification indicates that data is successfully stored prior to filtering
-      shinyalert("Filtered data successfully stored", type = "success")
+      shinyalert::shinyalert("Filtered data successfully stored", type = "success")
 
     }
 
     # Stored data removed via filtering
-    removed_values$removed_data <- unprocessed$data %>%
-      anti_join(App_data$values, by = "Serial")
+    removed_values$removed_data <- unprocessed$data |>
+      dplyr::anti_join(App_data$values, by = "Serial")
 
     # Clears data stored prior to filtering
     unprocessed$data <- NULL
@@ -240,7 +240,7 @@ observeEvent(
 ##############################
 # This re-adds removed data due to filtering with a button press.
 
-observeEvent(
+shiny::observeEvent(
 
   input$re_add_data, {
 
@@ -248,53 +248,53 @@ observeEvent(
     if (is.null(removed_values$removed_data) & ("Serial" %notin% colnames(App_data$values))){
 
       # Error Notification to filter data and re-add serial number
-      shinyalert("There is no filtered values stored and no serial number attached to data",
+      shinyalert::shinyalert("There is no filtered values stored and no serial number attached to data",
                  "Please re-add serial number and press the store filtered values button", type = "error")
 
       # Ensure that removed data is there and Serial number is given
       shiny::validate(
-        need(App_data$values$Serial, "There is no Serial Number"),
-        need(removed_values$removed_data, "There is no filtered values removed"
+        shiny::need(App_data$values$Serial, "There is no Serial Number"),
+        shiny::need(removed_values$removed_data, "There is no filtered values removed"
         ))
 
       # Ensure that removed data is there
     } else if (is.null(removed_values$removed_data) & ("Serial" %in% colnames(App_data$values))) {
 
       # Error Notification to store removed data via filtering
-      shinyalert("There is no filtered values stored.","Press the store filtered values button.", type = "error")
+      shinyalert::shinyalert("There is no filtered values stored.","Press the store filtered values button.", type = "error")
 
       # Ensure that removed data is there
       shiny::validate(
-        need(removed_values$removed_data, "There is no filtered values removed"
+        shiny::need(removed_values$removed_data, "There is no filtered values removed"
         ))
 
       # Ensure that Serial number is there
     } else if(!is.null(removed_values$removed_data) & ("Serial" %notin% colnames(App_data$values))){
 
       # Error Notification to re-add Serial number
-      shinyalert("There is no serial number attached to the data.","Please re-add serial number", type = "error")
+      shinyalert::shinyalert("There is no serial number attached to the data.","Please re-add serial number", type = "error")
 
       # Ensure that Serial number is given
       shiny::validate(
-        need(App_data$values$Serial, "There is no Serial Number")
+        shiny::need(App_data$values$Serial, "There is no Serial Number")
       )
 
     } else {
 
-      shinyalert("Filtered data successfully re-added.", type = "success")
+      shinyalert::shinyalert("Filtered data successfully re-added.", type = "success")
 
     }
 
 
-    isolate({
+    shiny::isolate({
 
       temp <- App_data$values
 
     })
 
     # Read Filtered Data
-    App_data$values <- rbind(temp, removed_values$removed_data) %>%
-      arrange(Serial)
+    App_data$values <- rbind(temp, removed_values$removed_data) |>
+      dplyr::arrange(Serial)
 
     # Clear Stored data after re-added to dataset.
     removed_values$removed_data <- NULL
