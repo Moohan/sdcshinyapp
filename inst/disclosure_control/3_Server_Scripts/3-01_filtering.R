@@ -27,7 +27,7 @@ shiny::observeEvent(
 
       # Validation to ensure that data has Serial Number
       shiny::validate(
-        need(App_data$values$Serial, "There is no Serial Number")
+        shiny::need(App_data$values$Serial, "There is no Serial Number")
       )
 
     } else {
