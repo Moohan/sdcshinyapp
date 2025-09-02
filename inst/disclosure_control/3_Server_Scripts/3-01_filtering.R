@@ -243,12 +243,25 @@ shiny::observeEvent(input$re_add_data, {
   # Re-add filtered data
   shiny::isolate({
     temp <- App_data$values
+
+    # Identify character columns in temp
+    char_cols <- names(temp)[sapply(temp, is.character)]
+
+    # Coerce matching columns in removed_values$removed_data to character
+    removed_values$removed_data[char_cols] <- lapply(
+      removed_values$removed_data[char_cols],
+      as.character
+    )
+
+    # Bind and arrange
     App_data$values <- dplyr::bind_rows(temp, removed_values$removed_data) |>
       dplyr::arrange(Serial)
+
+    # Clear stored removed data
+    removed_values$removed_data <- NULL
+
   })
 
-  # Clear stored removed data
-  removed_values$removed_data <- NULL
 })
 
 # END OF SCRIPT ----
