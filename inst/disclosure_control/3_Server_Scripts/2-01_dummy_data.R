@@ -1,58 +1,45 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 01 Oct 2024
-#By: Robert Mitchell
-#Script: 2-01_dummy_data.R
-#Purpose: To select dummy data for the App.
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 2-01_dummy_data.R
+# Purpose     : Select and manage dummy data for the App
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
 # 1. Dummy Data Setup ----
 
 # Reactive expression to select training data
 trainingdata <- shiny::reactive({
-  switch(input$train_data_select,
-         "Wide Data" = sdcshinyapp::dummy_wide,
-         "Long Data" = sdcshinyapp::dummy_long)
-  })
+  switch(
+    input$train_data_select,
+    "Wide Data" = sdcshinyapp::dummy_wide,
+    "Long Data" = sdcshinyapp::dummy_long
+  )
+})
+
 
 # Store data as reactive values for processing
-App_data <- shiny::reactiveValues(values=NULL)
+App_data <- shiny::reactiveValues(values = NULL)
 
 # 2. Data Checks ----
 
-# Generate dataset summary
+# Dataset summary
 output$Train_summary_dist <- shiny::renderPrint({
-
   summary(trainingdata())
-
 })
 
-# Generate a summary of percentage of missing data in each variable
+# Missing data percentage per variable
 output$Train_summary_missing <- shiny::renderPrint({
-
-  (colSums(is.na(trainingdata())) / nrow(trainingdata()))*100
-
+  (colSums(is.na(trainingdata())) / nrow(trainingdata())) * 100
 })
 
-## 3. Dummy Data Choice ----
+# 3. Dummy Data Selection ----
 
-# Select Training Data with button press
-shiny::observeEvent(
+# Load training data on button press
+shiny::observeEvent(input$use_train, {
+  App_data$values <- trainingdata() |>
+    dplyr::mutate(Serial = dplyr::row_number()) |>
+    dplyr::select(Serial, dplyr::everything())
+})
 
-  input$use_train, {
-
-    App_data$values <- trainingdata() |>
-      dplyr::mutate(Serial = dplyr::row_number()) |>
-      dplyr::select(Serial, dplyr::everything())
-
-  }
-
-)
-
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----

@@ -1,59 +1,48 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 01 Oct 2024
-#By: Robert Mitchell
-#Script: 2-02_file_upload.R
-#Purpose: To upload an input file for the App.
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 2-02_file_upload.R
+# Purpose     : Upload input file for the App
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
-# Create empty vector to store column names
-dsnames <- c()
+# 1. File Upload ----
 
-## 1. File Upload ----
-
-# Reactive Statement to store input data
+# Reactive expression to read uploaded file
 data <- shiny::reactive({
-  inFile <- input$upload  # Get uploaded file
-  req(inFile)  # Ensures file is uploaded
-  ext <- tools::file_ext(inFile$name)  # Extract the file extension
+  inFile <- input$upload
+  req(inFile)
 
-  # Read the file based on its extension
+  ext <- tools::file_ext(inFile$name)
+
   switch(ext,
-         csv = dplyr::as_tibble(readr::read_csv(inFile$datapath)),  # Read CSV file and convert to tibble
-         xlsx = readxl::read_excel(inFile$datapath),  # Read XLSX file
-         xls = readxl::read_xls(inFile$datapath),  # Read XLS file
-         shiny::validate("Invalid file; Please upload a .csv or .xlsx/.xls file")  # Validate file type
+         csv  = dplyr::as_tibble(readr::read_csv(inFile$datapath)),
+         xlsx = readxl::read_excel(inFile$datapath),
+         xls  = readxl::read_xls(inFile$datapath),
+         shiny::validate("Invalid file; please upload a .csv, .xlsx, or .xls file")
   )
 })
 
-## 2. Add Serial Number to Input ----
+# 2. Add Serial Number to Input ----
 
-# Allows data to be stored as reactive values for processing
-App_data <- shiny::reactiveValues(values=NULL)
+# Reactive values to store processed data
+App_data <- shiny::reactiveValues(values = NULL)
 
-# Add Serial number to 1st column in dataframe
+# Add Serial column to uploaded data
 shiny::observe({
+  # Reset trainingdata() only if data() is available
+  if (!is.null(data())) {
 
-  App_data$values <- data() |>
-    dplyr::mutate(Serial = dplyr::row_number()) |>
-    dplyr::select(Serial,
-                  dplyr::everything())
-
-  })
-
-## 3. Summary Tables Render ----
-
-# Dataset Summary
-output$upload_summary_dist <- shiny::renderPrint({
-
-  summary(data())
-
+    # Assign uploaded data with Serial column
+    App_data$values <- data() |>
+      dplyr::mutate(Serial = dplyr::row_number()) |>
+      dplyr::select(Serial, dplyr::everything())
+  }
 })
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# 3. Summary Table ----
+
+# Render dataset summary
+output$upload_summary_dist <- shiny::renderPrint({
+  summary(data())
+})

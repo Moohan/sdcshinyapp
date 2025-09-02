@@ -113,9 +113,12 @@ test_that("Function handles non-existent columns", {
   expect_error(Stat_Primary_Supress(ps_sample_data, c("nonexistent"), "*", 3, TRUE), "Error: 'var_choice' must be a non-empty character vector and all columns must exist in 'orig_data'.")
 })
 
-# test_that("Function handles invalid suppression character", {
-#   expect_error(Stat_Primary_Supress(ps_sample_data, c("20-24"), "x", 3, TRUE), "Error: 'char_supp' must be either '*' or 'c'.")
-# })
+test_that("Function handles invalid suppression character", {
+  expect_error(
+    Stat_Primary_Supress(ps_sample_data, c("20-24"), "x", 3, TRUE),
+    "'char_supp' must be either '\\*' or 'c'"
+  )
+})
 
 test_that("Function handles invalid suppression condition", {
   expect_error(Stat_Primary_Supress(ps_sample_data, c("20-24"), "*", -1, TRUE), "Error: 'sup_cond' must be a single positive whole integer.")
@@ -145,7 +148,7 @@ test_that("Function returns original data if no numeric variables are selected",
 
 # 4. Secondary Suppression Tests ----
 
-test_that("Stat_Secondary_Supress works correctly", {
+testthat::test_that("Stat_Secondary_Supress works correctly", {
   # Example dataset
   inp_data <- data.frame(
     Total = c(1, 2, 3, 4, 5, NA),
@@ -201,7 +204,7 @@ test_that("Stat_Secondary_Supress works correctly", {
   expect_equal(s_data$Total[6], NA_character_)
 })
 
-test_that::test_that("Stat_Secondary_Supress handles invalid input correctly", {
+testthat::test_that("Stat_Secondary_Supress handles invalid input correctly", {
   # Example dataset
   inp_data <- data.frame(
     Total = c(1, 2, 3, 4, 5, NA),
@@ -217,20 +220,38 @@ test_that::test_that("Stat_Secondary_Supress handles invalid input correctly", {
   )
 
   # Test missing data
-  expect_error(Stat_Secondary_Supress(NULL, "Total", c("20-24", "25-29"), "*", 3, TRUE), "Error: 'orig_data' must be provided, cannot be NULL, and must be a dataframe or tibble.")
+  expect_error(
+    Stat_Secondary_Supress(NULL, "Total", c("20-24", "25-29"), "*", 3, TRUE),
+    "Error: 'orig_data' must be provided, cannot be NULL, and must be a dataframe or tibble."
+  )
 
   # Test invalid primary variable
-  expect_error(Stat_Secondary_Supress(inp_data, "Invalid", c("20-24", "25-29"), "*", 3, TRUE), "Error: 'pri_var_choice' must be a single character string and must exist in 'orig_data'.")
+  expect_error(
+    Stat_Secondary_Supress(inp_data, "Invalid", c("20-24", "25-29"), "*", 3, TRUE),
+    "Error: 'pri_var_choice' must be a single character string and must exist in 'orig_data'."
+  )
 
   # Test invalid secondary variables
-  expect_error(Stat_Secondary_Supress(inp_data, "Total", c("Invalid1", "Invalid2"), "*", 3, TRUE), "Error: 'sec_var_choice' must be a character vector with at least two elements, and all columns must exist in 'orig_data'.")
+  expect_error(
+    Stat_Secondary_Supress(inp_data, "Total", c("Invalid1", "Invalid2"), "*", 3, TRUE),
+    "Error: 'sec_var_choice' must be a character vector with at least two elements, all columns must exist in 'orig_data', and none should overlap with 'pri_var_choice'."
+  )
 
   # Test invalid suppression character
-  # expect_error(Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "x", 3, TRUE), "Error: 'char_supp' must be either '*' or 'c'.")
+  expect_error(
+    Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "x", 3, TRUE),
+    "'char_supp' must be either '\\*' or 'c'"
+  )
 
   # Test invalid suppression condition
-  expect_error(Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "*", -1, TRUE), "Error: 'sup_cond' must be a single positive whole integer.")
+  expect_error(
+    Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "*", -1, TRUE),
+    "Error: 'sup_cond' must be a single positive whole integer."
+  )
 
   # Test invalid zero suppression
-  expect_error(Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "*", 3, "TRUE"), "Error: 'zero' must be a single logical value.")
+  expect_error(
+    Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "*", 3, "TRUE"),
+    "Error: 'zero' must be a single logical value."
+  )
 })

@@ -1,43 +1,34 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 02 Oct 2024
-#By: Robert Mitchell
-#Script: 5-02_train.R
-#Purpose: To download live data from app
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 5-02_train.R
+# Purpose     : Reset training data in the app
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
 # 1. Data Reset ----
-
-# Data Reset
 shiny::observeEvent(input$training_dat_reset, {
+  if (is.null(trainingdata())) {
+    shinyalert::shinyalert("Error: No input data available to reset.", type = "error")
+    return(NULL)
+  }
 
-  # Validation - Data must be provided
-  shiny::validate(need(trainingdata(), "There is no input data"))
+  shinyalert::shinyalert("Input data reset to initial state.", type = "success")
 
-  # Success Notification
-  shinyalert::shinyalert(title = "Input data reset to initial state.", type = "success")
-
-  # Data Reset
   shiny::isolate({
     App_data$values <- trainingdata() |>
       dplyr::mutate(Serial = dplyr::row_number()) |>
       dplyr::select(Serial, dplyr::everything())
-    })
+  })
 
-  # Clear Prior Settings
+  # Clear prior settings
   unprocessed$data <- NULL
   removed_values$removed_data <- NULL
   Serial_Removed$data <- NULL
   key_value_header$header <- NULL
   variable_value_header$header <- NULL
   key_value_options$data <- NULL
+})
 
-  })
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----

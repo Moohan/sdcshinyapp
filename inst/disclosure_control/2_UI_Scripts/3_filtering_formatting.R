@@ -1,28 +1,24 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 01 Oct 2024
-#By: Robert Mitchell
-#Script: 3_filtering_formatting.R
-#Purpose: To set up UI for the Filtering/Formatting Tab
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 3_filtering_formatting.R
+# Purpose     : UI for Filtering/Formatting Tab
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
-# Create 2. Input Data Filtering/Formatting ----
-shiny::tabPanel("2. Input Data Filtering/Formatting", shiny::navlistPanel(
-  id = "tabset",
-  widths = sb_width,
+# Create 2. Input Data Filtering/Formatting Tab ----
+shiny::tabPanel(
+  "2. Input Data Filtering/Formatting",
+  shiny::navlistPanel(
+    id = "tabset",
+    widths = sb_width,
 
-  ## 1. Filtering Section ----
-  source("2_UI_Scripts/3-01_filtering.R",  local = TRUE)$value,
+    # Filtering Section
+    source("2_UI_Scripts/3-01_filtering.R", local = TRUE)$value,
 
-  ## 2. Data Format Transform Section ----
-  source("2_UI_Scripts/3-02_formatting.R",  local = TRUE)$value
+    # Data Format Transform Section
+    source("2_UI_Scripts/3-02_formatting.R", local = TRUE)$value
   )
-  )
+)
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----

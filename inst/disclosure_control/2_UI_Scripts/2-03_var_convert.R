@@ -1,37 +1,40 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 21 Feb 2025
-#By: Robert Mitchell
-#Script: 2-03_var_convert.R
-#Purpose: Set up UI for the Sub-Tab used to convert variable types
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 2-03_var_convert.R
+# Purpose     : Set up UI for the Sub-Tab used to convert variable types
+# Last Update : 01 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
-# Create Variable Conversion Sub Tab for 1. Input Data Main Tab
-shiny::tabPanel("Variable Conversion",
+# Variable Conversion Sub-Tab for Input Data Main Tab
+shiny::tabPanel(
+  "Variable Conversion",
+  shiny::fluidRow(
 
-                # Input and Output Definitions
-                shiny::fluidRow(
+    # Input Panel
+    shiny::column(
+      width = 3,
+      shiny::selectInput(
+        inputId = "Variable_Convert",
+        label = "Choose Variable to Convert:",
+        choices = "",
+        multiple = FALSE
+      ),
+      shiny::br(),
 
-                  # Input Definitions
-                  shiny::column(3,
-                                shiny::selectInput("Variable_Convert", label = "Choose Variable to Convert:", choices = "", multiple = FALSE), # Variable Conversion Options
-                                shiny::br(), # New Line
-                                shiny::h5(shiny::strong("Convert Character Variable to Numeric Variable")), # Sub Heading for Character to Numeric Variable Conversion
-                                shiny::actionButton('char_to_num', 'Convert'), # Button for convert character variables to numeric variables
-                                shiny::br(), # New Line
-                                shiny::h5(shiny::strong("Convert Numeric Variable to Character Variable")), # Sub Heading for Numeric to Character Variable Conversion
-                                shiny::actionButton('num_to_char', 'Convert') # Button for convert numeric variables to character variables
-                  ),
+      shiny::h5(shiny::strong("Convert Character Variable to Numeric")),
+      shiny::actionButton("char_to_num", "Convert"),
+      shiny::br(),
 
-                  # Output Definitions
-                  shiny::mainPanel(DT::dataTableOutput("convert_data")) # Visualisation of Processed Data in App
-                )
+      shiny::h5(shiny::strong("Convert Numeric Variable to Character")),
+      shiny::actionButton("num_to_char", "Convert")
+    ),
+
+    # Output Panel
+    shiny::mainPanel(
+      DT::dataTableOutput("convert_data")
+    )
+  )
 )
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----

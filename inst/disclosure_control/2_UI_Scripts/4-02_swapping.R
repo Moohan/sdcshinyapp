@@ -1,42 +1,45 @@
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#Run on Posit version: 4.1.2
-#Last updated: 01 Oct 2024
-#By: Robert Mitchell
-#Script: 4-02_swapping.R
-#Purpose: To set up UI for the Swapping Sub Tab
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ------------------------------------------------------------------------------
+# Script Name : 4-02_swapping.R
+# Purpose     : UI for Swapping Sub-Tab
+# Last Update : 22 Aug 2025
+# Author      : Robert Mitchell
+# Posit Version: 4.4.2
+# ------------------------------------------------------------------------------
 
-# Create Record Swapping Sub-Tab for 3. SDC Methods Tab
-shiny::tabPanel("Record Swapping", fluid = TRUE,
+# Record Swapping Sub-Tab for 3. SDC Methods Tab
+shiny::tabPanel(
+  "Record Swapping",
+  fluid = TRUE,
+  shiny::fluidRow(
+    # Input Definitions
+    shiny::sidebarPanel(
+      shiny::selectInput(
+        "Disc_Variables_Swap",
+        label = "Choose Variables to Swap:",
+        choices = "",
+        multiple = TRUE
+      ),
+      shiny::numericInput(
+        "Swap_Cond",
+        "Condition for Swapping",
+        value = 10,
+        min = 1,
+        max = 1000
+      ),
+      shiny::br(),
+      shiny::h5(shiny::strong("Record Swapping")),
+      shiny::actionButton("swapping", "Swap"),
+      shiny::br(), shiny::br(), shiny::br(),
 
-                #Input and output Definitions
-                shiny::fluidRow(
+      shiny::h4("Swapping Information"),
+      shiny::p("For record swapping, all numbers in the selected variables less than or equal to the swapping condition are swapped.")
+    ),
 
-                  # Input Definitions
-                  shiny::sidebarPanel(
-                    shiny::selectInput("Disc_Variables_Swap", label = "Choose Variables to Swap:", choices = "", multiple = TRUE), # Choose Variables to Swap
-                    shiny::numericInput("Swap_Cond","Condition for Swapping", value = 10, min = 1, max = 1000), # Select Swapping Condition
-                    shiny::br(), # New Line
-                    shiny::h5(shiny::strong("Record Swapping")), # Heading indicating Swapping Button
-                    shiny::actionButton("swapping", "Swap"), # Button to swap data
-                    shiny::br(), # New Line
-                    shiny::br(), # New Line
-                    shiny::br(), # New Line
-                    shiny::h4("Swapping Information"), # Help Text Heading
-                    shiny::p("For record swapping, all numbers in the selected variables less than or equal to the swapping condition are swapped.") # Help Text
-                    ),
+    # Output Definitions
+    shiny::mainPanel(
+      DT::dataTableOutput("Swapped_data")
+    )
+  )
+)
 
-                  # Output Definitions
-                  shiny::mainPanel(
-                    DT::dataTableOutput("Swapped_data") # Visualisation of Swapped Data in App
-                    )
-                  )
-                )
-
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# End ----
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# END OF SCRIPT ----
