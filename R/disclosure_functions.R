@@ -318,7 +318,7 @@ Stat_Secondary_Supress <- function(orig_data, pri_var_choice, sec_var_choice, ch
     stop("Error: 'pri_var_choice' must be a single character string and must exist in 'orig_data'.")
   }
 
-  if (!is.character(sec_var_choice) || length(sec_var_choice) < 2 || !all(sec_var_choice %in% colnames(orig_data)) ||  any(sec_var_choice %in% pri_var_choice)) {
+  if (!is.character(sec_var_choice) || length(sec_var_choice) < 2 || !all(sec_var_choice %in% colnames(orig_data)) || any(sec_var_choice %in% pri_var_choice)) {
     stop("Error: 'sec_var_choice' must be a character vector with at least two elements, all columns must exist in 'orig_data', and none should overlap with 'pri_var_choice'.")
   }
 

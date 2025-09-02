@@ -254,5 +254,4 @@ testthat::test_that("Stat_Secondary_Supress handles invalid input correctly", {
     Stat_Secondary_Supress(inp_data, "Total", c("20-24", "25-29"), "*", 3, "TRUE"),
     "Error: 'zero' must be a single logical value."
   )
-
 })
